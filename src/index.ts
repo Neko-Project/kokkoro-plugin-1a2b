@@ -6,49 +6,71 @@ const option: Option = {
   apply: true,
   lock: false,
 }
-const plugin = new Plugin('kokkoro-plugin-1A2B', option)
+const plugin = new Plugin('1A2B', option)
 
 const data_rec = new Map<number, Game>()
 
-plugin.listen('message.group').trigger((event) => {
-  const msg = event.raw_message.trim()
-  const group = event.group_id
+plugin
+  .command('start', 'group')
+  .description('新开一轮 1A2B')
+  .sugar('1A2B')
+  .action((ctx) => {
+    const { group_id, sender } = ctx
 
-  if (msg === '关闭1A2B') {
-    data_rec.delete(event.group_id)
-    event.reply([segment.at(event.sender.user_id), '1A2B已关闭。'])
-  }
-
-  if (msg === '1A2B') {
-    if (data_rec.has(event.group_id)) {
-      event.reply([
-        segment.at(event.sender.user_id),
+    if (data_rec.has(group_id)) {
+      ctx.reply([
+        segment.at(sender.user_id),
         '1A2B已经开始了，不用重复发送哦。',
       ])
       return
     }
-    data_rec.set(event.group_id, new Game())
-    event.reply([
-      segment.at(event.sender.user_id),
-      '1A2B开始啦！发送4位数字吧！',
-    ])
-  }
+    data_rec.set(group_id, new Game())
+    ctx.reply([segment.at(sender.user_id), '1A2B开始啦！发送4位数字吧！'])
+  })
 
-  if (msg.length === 4 && !isNaN(Number(msg)) && data_rec.has(group)) {
-    let game = data_rec.get(group)
-    if (game.submit(msg)) {
-      event.reply([
-        segment.at(event.sender.user_id),
-        `答对啦！答案是：${msg}\n`,
-        `一共猜了：${game.submit_times} 次\n`,
-        `发送「1A2B」再来一局吧！`,
-      ])
-      data_rec.delete(event.group_id)
+plugin
+  .command('end', 'group')
+  .description('结束 1A2B')
+  .sugar('关闭1A2B')
+  .action((ctx) => {
+    data_rec.delete(ctx.group_id)
+    ctx.reply([segment.at(ctx.sender.user_id), '1A2B已关闭。'])
+  })
+
+plugin
+  .command('submit <guess>', 'group')
+  .description('提交答案')
+  .sugar(/([0-9]+){4}/)
+  .action((ctx) => {
+    const { raw_message, group_id, query, sender } = ctx
+    let guess: string
+    if (isValid(raw_message)) {
+      guess = raw_message
+    } else if (isValid(query.guess)) {
+      guess = query.guess
     } else {
-      event.reply([
-        segment.at(event.sender.user_id),
-        ` | ${game.calculateHint(msg)}`,
-      ])
+      return
     }
-  }
-})
+
+    if (data_rec.has(group_id)) {
+      let game = data_rec.get(group_id)
+      if (game.submit(guess)) {
+        ctx.reply([
+          segment.at(sender.user_id),
+          `答对啦！答案是：${guess}\n`,
+          `一共猜了：${game.submit_times} 次\n`,
+          `发送「1A2B」再来一局吧！`,
+        ])
+        data_rec.delete(group_id)
+      } else {
+        ctx.reply([
+          segment.at(sender.user_id),
+          ` | ${game.calculateHint(guess)}`,
+        ])
+      }
+    }
+  })
+
+function isValid(guess: string) {
+  return guess.length === 4 && !isNaN(Number(guess))
+}
