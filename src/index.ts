@@ -40,12 +40,13 @@ plugin
 plugin
   .command('submit <guess>', 'group')
   .description('提交答案')
-  .sugar(/([0-9]+){4}/)
+  .sugar(/(?<guess>\d){4}/)
   .action((ctx) => {
     const { raw_message, group_id, query, sender } = ctx
+    const msg = raw_message.trim()
     let guess: string
-    if (isValid(raw_message)) {
-      guess = raw_message
+    if (isValid(msg)) {
+      guess = msg
     } else if (isValid(query.guess)) {
       guess = query.guess
     } else {
@@ -72,5 +73,5 @@ plugin
   })
 
 function isValid(guess: string) {
-  return guess.length === 4 && !isNaN(Number(guess))
+  return guess && guess.length === 4 && !isNaN(Number(guess))
 }
