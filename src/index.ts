@@ -1,5 +1,4 @@
-import { Plugin, Option } from 'kokkoro'
-import { segment } from 'oicq'
+import { Plugin, Option, segment } from 'kokkoro'
 import { Game } from './1A2B'
 
 const option: Option = {
@@ -53,8 +52,8 @@ plugin
       return
     }
 
-    if (data_rec.has(group_id)) {
-      let game = data_rec.get(group_id)
+    const game = data_rec.get(group_id)
+    if (game) {
       if (game.submit(guess)) {
         ctx.reply([
           segment.at(sender.user_id),

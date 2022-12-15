@@ -1,6 +1,6 @@
 {
   "name": "kokkoro-plugin-1a2b",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "1A2B for kokkoro",
   "author": "Miaow233 <miaow233@qq.com>",
   "license": "MIT",
@@ -18,5 +18,8 @@
     "tabWidth": 2,
     "semi": false,
     "singleQuote": true
-  }
+  },
+  "files": [
+    "lib"
+  ]
 }
