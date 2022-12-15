@@ -1,14 +1,19 @@
 {
   "name": "kokkoro-plugin-1a2b",
   "version": "1.0.0",
-  "description": "",
+  "description": "1A2B for kokkoro",
+  "author": "Miaow233 <miaow233@qq.com>",
+  "license": "MIT",
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "kokkoro"
+  ],
+  "devDependencies": {
+    "kokkoro": "^1.2.7"
+  },
   "prettier": {
     "tabWidth": 2,
     "semi": false,
