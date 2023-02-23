@@ -1,4 +1,5 @@
-import { Plugin, Option, segment } from 'kokkoro'
+import { segment } from 'amesu'
+import { Plugin, Option } from '@kokkoro/core'
 import { Game } from './1A2B'
 
 const option: Option = {
@@ -23,7 +24,7 @@ plugin
       ])
       return
     }
-    data_rec.set(group_id, new Game())
+    data_rec.set(group_id, new Game(plugin))
     ctx.reply([segment.at(sender.user_id), '1A2B开始啦！发送4位数字吧！'])
   })
 

@@ -1,8 +1,7 @@
-import { logger } from 'kokkoro'
+import { Plugin } from '@kokkoro/core'
 
 function generate() {
   let num = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4).join('')
-  logger.debug(`已生成1A2B: ${num}`)
   return num
 }
 
@@ -23,9 +22,12 @@ export class Game {
   private answer: string
   public submit_times: number
 
-  constructor() {
+  constructor(
+    private plugin: Plugin
+  ) {
     this.answer = generate()
     this.submit_times = 0
+    this.plugin.logger.debug(`已生成1A2B: ${this.answer}`)
   }
 
   submit(num: string) {
